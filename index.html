@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Cyber Resilience Self-Assessment</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1, h2 { color: #2c3e50; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    select { margin-top: 5px; width: 100px; }
+    .question-block { margin-bottom: 20px; }
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      font-size: 1.2em;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+    }
+    .passive { background-color: #ffdddd; border-color: #d9534f; }
+    .reactive, .aware { background-color: #fff3cd; border-color: #f0ad4e; }
+    .strategic { background-color: #d4edda; border-color: #28a745; }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Student Cyber Resilience Self-Assessment Tool</h1>
+
+  <p>This self-assessment helps UCC students reflect on how prepared and responsive they are to cyber incidents and digital disruptions.</p>
+
+  <h2>👉 Frequency Scale:</h2>
+  <ul>
+    <li>0 = Never</li>
+    <li>1 = Rarely</li>
+    <li>2 = Occasionally</li>
+    <li>3 = Sometimes</li>
+    <li>4 = Often</li>
+    <li>5 = Always</li>
+  </ul>
+
+  <h2>👉 Agreement Scale:</h2>
+  <ul>
+    <li>0 = Strongly Disagree</li>
+    <li>1 = Disagree</li>
+    <li>2 = Somewhat Disagree</li>
+    <li>3 = Somewhat Agree</li>
+    <li>4 = Agree</li>
+    <li>5 = Strongly Agree</li>
+  </ul>
+
+  <form id="assessmentForm">
+    <h2>Questions</h2>
+    <div id="questionsContainer"></div>
+    <button type="button" onclick="calculatePersona()">Calculate My Persona</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const questions = [
+      { text: "I am aware of the kinds of cyber threats that could affect students at UCC (e.g., phishing, ransomware, account compromise).", dimension: "Readiness", type: "Agreement" },
+      { text: "I check that my software and apps are up to date on my laptop or phone.", dimension: "Readiness", type: "Frequency" },
+      { text: "I create and maintain backups of important files (e.g., assignments, research data).", dimension: "Readiness", type: "Frequency" },
+      { text: "I feel prepared to avoid digital mistakes that could compromise my data or access (e.g., clicking suspicious links or reusing passwords).", dimension: "Readiness", type: "Agreement" },
+      { text: "I follow personal cyber hygiene routines (e.g. strong passwords, device locks).", dimension: "Readiness", type: "Frequency" },
+      { text: "I know how to access my UCC email and key services from another device if mine fails.", dimension: "Readiness", type: "Agreement" },
+      { text: "I verify who has access to my shared files or folders and remove unnecessary permissions.", dimension: "Readiness", type: "Frequency" },
+      { text: "I could explain to a peer how to stay safe online using examples I’ve learned or practiced.", dimension: "Readiness", type: "Agreement" },
+
+      { text: "If I lost access to my student account or data, I would know what immediate steps to take.", dimension: "Response", type: "Agreement" },
+      { text: "When something suspicious happens (e.g., unexpected login attempt, dodgy email), I act quickly to report or contain it.", dimension: "Response", type: "Frequency" },
+      { text: "I know how to restore deleted files or access previous versions on cloud platforms like OneDrive.", dimension: "Response", type: "Agreement" },
+      { text: "I have tested what I would do in a tech failure or cyber incident (e.g., tried logging in from another device, restoring a file).", dimension: "Response", type: "Frequency" },
+      { text: "I’ve adjusted my digital habits based on past mistakes, incidents, or learning experiences.", dimension: "Response", type: "Agreement" },
+      { text: "I reflect on or discuss with others how to improve cyber safety (e.g., asking “what would you do if…” questions).", dimension: "Response", type: "Frequency" },
+      { text: "I would feel confident guiding a less cyber-aware peer through a suspicious situation.", dimension: "Response", type: "Agreement" },
+      { text: "I take steps to stay informed (e.g., read IT support tips, attend a cyber awareness event, watch short explainer videos).", dimension: "Response", type: "Frequency" }
+    ];
+
+    function generateQuestions() {
+      const container = document.getElementById("questionsContainer");
+      questions.forEach((q, i) => {
+        const div = document.createElement("div");
+        div.className = "question-block";
+        div.innerHTML = `
+          <label for="q${i}">Q${i + 1} (${q.type}, ${q.dimension}): ${q.text}</label>
+          <select id="q${i}" name="q${i}" required>
+            <option value="" disabled selected>Select score</option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function calculatePersona() {
+      let readinessSum = 0, responseSum = 0;
+      let readinessCount = 0, responseCount = 0;
+
+      for (let i = 0; i < questions.length; i++) {
+        const val = parseInt(document.getElementById(q${i}).value);
+        if (isNaN(val)) {
+          alert("Please answer all questions before submitting.");
+          return;
+        }
+        if (questions[i].dimension === "Readiness") {
+          readinessSum += val;
+          readinessCount++;
+        } else {
+          responseSum += val;
+          responseCount++;
+        }
+      }
+
+      const readiness = readinessSum / readinessCount;
+      const response = responseSum / responseCount;
+
+      let persona = "", emoji = "", className = "";
+      if (readiness < 2.5 && response < 2.5) {
+        persona = "Passive";
+        emoji = "🟠";
+        className = "passive";
+      } else if (readiness > 2.5 && response > 2.5) {
+        persona = "Strategic";
+        emoji = "🟢";
+        className = "strategic";
+      } else if (readiness > 2.5 && response < 2.5) {
+        persona = "Aware";
+        emoji = "🔵";
+        className = "aware";
+      } else if (readiness < 2.5 && response > 2.5) {
+        persona = "Reactive";
+        emoji = "🟣";
+        className = "reactive";
+      }
+
+      const resultDiv = document.getElementById("result");
+      resultDiv.className = className;
+      resultDiv.innerHTML = `
+        <h2>Result</h2>
+        <p><strong>Readiness Score:</strong> ${readiness.toFixed(2)}</p>
+        <p><strong>Response Score:</strong> ${response.toFixed(2)}</p>
+        <p><strong>Your Persona Type:</strong> ${emoji} ${persona}</p>
+      `;
+    }
+
+    generateQuestions();
+  </script>
+
+</body>
+</html>
