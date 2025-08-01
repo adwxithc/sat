@@ -114,7 +114,7 @@
       let readinessCount = 0, responseCount = 0;
 
       for (let i = 0; i < questions.length; i++) {
-        const val = parseInt(document.getElementById(q${i}).value);
+        const val = parseInt(document.getElementById(`q${i}`).value);
         if (isNaN(val)) {
           alert("Please answer all questions before submitting.");
           return;
